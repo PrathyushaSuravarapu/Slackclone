@@ -7,19 +7,16 @@ import { Grid } from "semantic-ui-react";
 
 function App() {
   return (
-    
-        <Grid columns="equal">
+    <Grid columns="equal">
       <SideBar />
-         <Grid.Column className="messagepanel">
-        <Messages /> 
+      <Grid.Column className="messagepanel">
+        <Messages />
       </Grid.Column>
 
       <Grid.Column width={3}>
-        <span>
-        </span>
-     </Grid.Column>
-   </Grid> 
-   
+        <span></span>
+      </Grid.Column>
+    </Grid>
   );
 }
 
