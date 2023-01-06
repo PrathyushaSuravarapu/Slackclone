@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/Slackclone/precache-manifest.29d8805841f8f6bbcbc142f5236e71ac.js"
+  "/Slackclone/precache-manifest.4dc63f2a3427ba94eeb294c27c08dd5c.js"
 );
 
 self.addEventListener('message', (event) => {
