@@ -10,8 +10,9 @@ import {
 } from "../../store/actioncreator";
 import { Segment, Comment } from "semantic-ui-react";
 import "./Messages.css";
-
+import { useHistory } from "react-router-dom";
 const Messages = (props) => {
+  const history = useHistory();
   const messageRef = firebase.database().ref("messages");
   const usersRef = firebase.database().ref("users");
 
@@ -19,6 +20,7 @@ const Messages = (props) => {
 
   const [searchTermState, setSearchTermState] = useState("");
   let divRef = useRef();
+  let uid = localStorage.getItem("props.user.uid");
   useEffect(() => {
     if (props.channel) {
       setMessagesState([]);
@@ -36,6 +38,7 @@ const Messages = (props) => {
 
   useEffect(() => {
     if (props.user) {
+      localStorage.setItem("props.user.uid", props.user.uid);
       usersRef
         .child(props.user.uid)
         .child("favourite")
@@ -63,11 +66,14 @@ const Messages = (props) => {
       ? filterMessageBySearchTerm()
       : messagesState;
     if (messagesToDisplay.length > 0) {
+      if (props.user === null) {
+        history.push("/login");
+      }
       return messagesToDisplay.map((message) => {
         return (
           <MessageContent
             imageLoaded={imageLoaded}
-            ownMessage={message.user.id === props.user.uid}
+            ownMessage={message.user.id === uid}
             key={message.timestamp}
             message={message}
           />
@@ -77,6 +83,16 @@ const Messages = (props) => {
   };
   const imageLoaded = () => {
     divRef.scrollIntoView({ behavior: "smooth" });
+  };
+  const uniqueusersCount = () => {
+    const uniqueUsers = messagesState.reduce((acc, message) => {
+      if (!acc.includes(message.user.name)) {
+        acc.push(message.user.name);
+      }
+      return acc;
+    }, []);
+
+    return uniqueUsers.length;
   };
   const searchTermChange = (e) => {
     const target = e.target;
@@ -97,16 +113,6 @@ const Messages = (props) => {
     return messages;
   };
 
-  const uniqueusersCount = () => {
-    const uniqueUsers = messagesState.reduce((acc, message) => {
-      if (!acc.includes(message.user.name)) {
-        acc.push(message.user.name);
-      }
-      return acc;
-    }, []);
-
-    return uniqueUsers.length;
-  };
   const starChange = () => {
     let favouriteRef = usersRef
       .child(props.user.uid)

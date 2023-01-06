@@ -4,8 +4,10 @@ import firebase from "../../../server/firebase";
 import { setChannel } from "../../../store/actioncreator";
 import { Notification } from "../Notification/Notification";
 import { Menu, Icon } from "semantic-ui-react";
+import { useHistory } from "react-router-dom";
 
 const PrivateChat = (props) => {
+  const history = useHistory();
   const [usersState, setUsersState] = useState([]);
 
   const [connectedUsersState, setConnectedUsersState] = useState([]);
@@ -68,34 +70,41 @@ const PrivateChat = (props) => {
   }, [usersState]);
 
   const displayUsers = () => {
-    if (usersState.length > 0) {
-      return usersState
-        .filter((user) => user.id !== props.user.uid)
-        .map((user) => {
-          return (
-            <Menu.Item
-              key={user.id}
-              name={user.name}
-              onClick={() => selectUser(user)}
-              active={
-                props.channel && generateChannelId(user.id) === props.channel.id
-              }
-            >
-              <Icon
-                name="circle"
-                color={`${
-                  connectedUsersState.indexOf(user.id) !== -1 ? "green" : "red"
-                }`}
-              />
-              <Notification
-                user={props.user}
-                channel={props.channel}
-                notificationChannelId={generateChannelId(user.id)}
-                displayName={"@ " + user.name}
-              />
-            </Menu.Item>
-          );
-        });
+    try {
+      if (usersState.length > 0) {
+        return usersState
+          .filter((user) => user.id !== props.user.uid)
+          .map((user) => {
+            return (
+              <Menu.Item
+                key={user.id}
+                name={user.name}
+                onClick={() => selectUser(user)}
+                active={
+                  props.channel &&
+                  generateChannelId(user.id) === props.channel.id
+                }
+              >
+                <Icon
+                  name="circle"
+                  color={`${
+                    connectedUsersState.indexOf(user.id) !== -1
+                      ? "green"
+                      : "red"
+                  }`}
+                />
+                <Notification
+                  user={props.user}
+                  channel={props.channel}
+                  notificationChannelId={generateChannelId(user.id)}
+                  displayName={"@ " + user.name}
+                />
+              </Menu.Item>
+            );
+          });
+      }
+    } catch (err) {
+      history.push("/login");
     }
   };
 
